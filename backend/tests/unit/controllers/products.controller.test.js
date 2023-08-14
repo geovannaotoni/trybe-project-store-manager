@@ -2,7 +2,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const { productsService } = require('../../../src/services');
-const { allProductsFromServiceSuccessful, allProductsFromModel, productFromServiceSuccessful, productFromModel, productFromServiceNotFound } = require('../../mocks/products.mock');
+const { allProductsFromServiceSuccessful, allProductsFromModel, productFromServiceSuccessful, productFromModel, productFromServiceNotFound, productFromServiceCreated, newProductFromModel } = require('../../mocks/products.mock');
 const { productsController } = require('../../../src/controllers');
 
 const { expect } = chai;
@@ -53,5 +53,18 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
     await productsController.findById(req, res);
     expect(res.status).to.have.been.calledWith(404);
     expect(res.json).to.have.been.calledWith(productFromServiceNotFound.data);
+  });
+
+  it('Inserindo product com sucesso - status 201', async function () {
+    sinon.stub(productsService, 'createProduct').resolves(productFromServiceCreated);
+    const req = { params: { }, body: { name: 'Anel do Lanterna Verde' } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.createProduct(req, res);
+    expect(res.status).to.have.been.calledWith(201);
+    expect(res.json).to.have.been.calledWith(newProductFromModel);
   });
 });

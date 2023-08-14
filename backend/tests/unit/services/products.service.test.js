@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { productsModel } = require('../../../src/models');
-const { allProductsFromModel, productFromModel } = require('../../mocks/products.mock');
+const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel } = require('../../mocks/products.mock');
 const { productsService } = require('../../../src/services');
 
 describe('Testes para a PRODUCTS CONTROLLER:', function () {
@@ -30,5 +30,14 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
     const responseService = await productsService.findById(inputData);
     expect(responseService.status).to.equal('NOT_FOUND');
     expect(responseService.data).to.deep.equal({ message: 'Product not found' });
+  });
+
+  it('Inserindo product com sucesso', async function () {
+    sinon.stub(productsModel, 'insert').resolves(productIdFromModel);
+    sinon.stub(productsModel, 'findById').resolves(newProductFromModel);
+    const inputData = { name: 'Anel do Lanterna Verde' };
+    const responseService = await productsService.createProduct(inputData);
+    expect(responseService.status).to.equal('CREATED');
+    expect(responseService.data).to.deep.equal(newProductFromModel);
   });
 });
