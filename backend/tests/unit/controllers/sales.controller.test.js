@@ -1,20 +1,20 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const { productsService } = require('../../../src/services');
-const { allProductsFromServiceSuccessful, allProductsFromModel, productFromServiceSuccessful, productFromModel, productFromServiceNotFound } = require('../../mocks/products.mock');
-const { productsController } = require('../../../src/controllers');
+const { salesService } = require('../../../src/services');
+const { allSalesFromServiceSuccessful, allSalesFromModel, saleFromModel, saleFromServiceSuccessful, saleFromServiceNotFound } = require('../../mocks/sales.mock');
+const { salesController } = require('../../../src/controllers');
 
 const { expect } = chai;
 chai.use(sinonChai);
 
-describe('Testes para a PRODUCTS CONTROLLER:', function () {
+describe('Testes para a SALES CONTROLLER:', function () {
   afterEach(function () {
     sinon.restore();
   });
 
   it('Recuperando todos os products com sucesso - Status 200', async function () {
-    sinon.stub(productsService, 'findAll').resolves(allProductsFromServiceSuccessful);
+    sinon.stub(salesService, 'findAll').resolves(allSalesFromServiceSuccessful);
 
     const req = { params: { }, body: { } };
     const res = {
@@ -22,13 +22,13 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
       json: sinon.stub(),
     };
 
-    await productsController.findAll(req, res);
+    await salesController.findAll(req, res);
     expect(res.status).to.have.been.calledWith(200);
-    expect(res.json).to.have.been.calledWith(allProductsFromModel);
+    expect(res.json).to.have.been.calledWith(allSalesFromModel);
   });
 
   it('Recuperando product por id com sucesso', async function () {
-    sinon.stub(productsService, 'findById').resolves(productFromServiceSuccessful);
+    sinon.stub(salesService, 'findById').resolves(saleFromServiceSuccessful);
 
     const req = { params: { id: 1 }, body: { } };
     const res = {
@@ -36,13 +36,13 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
       json: sinon.stub(),
     };
 
-    await productsController.findById(req, res);
+    await salesController.findById(req, res);
     expect(res.status).to.have.been.calledWith(200);
-    expect(res.json).to.have.been.calledWith(productFromModel);
+    expect(res.json).to.have.been.calledWith(saleFromModel);
   });
 
   it('Não recupera product com id inexistente - status 404', async function () {
-    sinon.stub(productsService, 'findById').resolves(productFromServiceNotFound);
+    sinon.stub(salesService, 'findById').resolves(saleFromServiceNotFound);
 
     const req = { params: { id: 9999 }, body: { } };
     const res = {
@@ -50,8 +50,8 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
       json: sinon.stub(),
     };
 
-    await productsController.findById(req, res);
+    await salesController.findById(req, res);
     expect(res.status).to.have.been.calledWith(404);
-    expect(res.json).to.have.been.calledWith(productFromServiceNotFound.data);
+    expect(res.json).to.have.been.calledWith(saleFromServiceNotFound.data);
   });
 });
