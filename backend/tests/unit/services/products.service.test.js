@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { productsModel } = require('../../../src/models');
-const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel } = require('../../mocks/products.mock');
+const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel, updatedProductFromModel, updateReturnFromDB } = require('../../mocks/products.mock');
 const { productsService } = require('../../../src/services');
 
 describe('Testes para a PRODUCTS SERVICE:', function () {
@@ -44,6 +44,41 @@ describe('Testes para a PRODUCTS SERVICE:', function () {
   it('Não insere product se o tamanho do campo "name" for menor que 5 caracteres', async function () {
     const inputData = { name: 'Anel' };
     const responseService = await productsService.createProduct(inputData);
+    expect(responseService.status).to.equal('INVALID_VALUE');
+    expect(responseService.data).to.deep.equal({ message: '"name" length must be at least 5 characters long' });
+  });
+
+  it('Alterando product com sucesso', async function () {
+    sinon.stub(productsModel, 'findById')
+      .onFirstCall()
+      .resolves(productFromModel)
+      .onSecondCall()
+      .resolves(updatedProductFromModel);
+    sinon.stub(productsModel, 'update').resolves(updateReturnFromDB);
+
+    const productId = 1;
+    const inputData = { name: 'Martelo do Batman' };
+    const responseService = await productsService.updateProduct(inputData, productId);
+
+    expect(responseService.status).to.equal('SUCCESSFUL');
+    expect(responseService.data).to.deep.equal(updatedProductFromModel);
+  });
+
+  it('Não altera product se o tamanho do campo "name" for menor que 5 caracteres', async function () {
+    sinon.stub(productsModel, 'findById')
+      .resolves(undefined);
+
+    const productId = 1;
+    const inputData = { name: 'Martelo do Batman' };
+    const responseService = await productsService.updateProduct(inputData, productId);
+    expect(responseService.status).to.equal('NOT_FOUND');
+    expect(responseService.data).to.deep.equal({ message: 'Product not found' });
+  });
+
+  it('Não altera product se o id recebido não existir', async function () {
+    const productId = 9999;
+    const inputData = { name: 'Anel' };
+    const responseService = await productsService.updateProduct(inputData, productId);
     expect(responseService.status).to.equal('INVALID_VALUE');
     expect(responseService.data).to.deep.equal({ message: '"name" length must be at least 5 characters long' });
   });
