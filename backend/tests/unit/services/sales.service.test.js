@@ -41,4 +41,26 @@ describe('Testes para a SALES SERVICE:', function () {
     expect(responseService.status).to.equal('CREATED');
     expect(responseService.data).to.deep.equal(newSalesFromServiceCreated.data);
   });
+
+  it('Não insere a venda se o campo quantity for menor que 1', async function () {
+    const inputData = [
+      { productId: 1, quantity: 0 },
+    ];
+    const responseService = await salesService.createSales(inputData);
+
+    expect(responseService.status).to.equal('INVALID_VALUE');
+    expect(responseService.data).to.deep.equal({ message: '"quantity" must be greater than or equal to 1' });
+  });
+
+  it('Não insere a venda se o productId for inválido', async function () {
+    sinon.stub(salesModel, 'findById').resolves(undefined);
+
+    const inputData = [
+      { productId: 9999, quantity: 1 },
+    ];
+    const responseService = await salesService.createSales(inputData);
+
+    expect(responseService.status).to.equal('NOT_FOUND');
+    expect(responseService.data).to.deep.equal({ message: 'Product not found' });
+  });
 });
