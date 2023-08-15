@@ -40,4 +40,11 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
     expect(responseService.status).to.equal('CREATED');
     expect(responseService.data).to.deep.equal(newProductFromModel);
   });
+
+  it('Não insere product se o tamanho do campo "name" for menor que 5 caracteres', async function () {
+    const inputData = { name: 'Anel' };
+    const responseService = await productsService.createProduct(inputData);
+    expect(responseService.status).to.equal('INVALID_VALUE');
+    expect(responseService.data).to.deep.equal({ message: '"name" length must be at least 5 characters long' });
+  });
 });
