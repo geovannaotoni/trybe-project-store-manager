@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const connection = require('../../../src/models/connection');
 const { productsModel } = require('../../../src/models');
-const { productFromDB, allProductsFromDB, productIdFromDB, productIdFromModel, updateReturnFromDB } = require('../../mocks/products.mock');
+const { productFromDB, allProductsFromDB, productIdFromDB, productIdFromModel, updateReturnFromDB, deleteReturnFromDB } = require('../../mocks/products.mock');
 
 describe('Testes para a PRODUCTS MODEL:', function () {
   afterEach(function () {
@@ -44,5 +44,14 @@ describe('Testes para a PRODUCTS MODEL:', function () {
 
     expect(result[0].affectedRows).to.be.equal(1);
     expect(result[0].changedRows).to.be.equal(1);
+  });
+
+  it('Deletando product com sucesso', async function () {
+    sinon.stub(connection, 'execute').resolves(deleteReturnFromDB);
+
+    const productId = 4;
+    const result = await productsModel.exclude(productId);
+
+    expect(result[0].affectedRows).to.be.equal(1);
   });
 });

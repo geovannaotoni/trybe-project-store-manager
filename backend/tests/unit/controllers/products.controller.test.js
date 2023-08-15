@@ -2,7 +2,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const { productsService } = require('../../../src/services');
-const { allProductsFromServiceSuccessful, allProductsFromModel, productFromServiceSuccessful, productFromModel, productFromServiceNotFound, productFromServiceCreated, newProductFromModel, updatedProductFromModel, productFromServiceUpdated } = require('../../mocks/products.mock');
+const { allProductsFromServiceSuccessful, allProductsFromModel, productFromServiceSuccessful, productFromModel, productFromServiceNotFound, productFromServiceCreated, newProductFromModel, updatedProductFromModel, productFromServiceUpdated, productFromServiceDeleted } = require('../../mocks/products.mock');
 const { productsController } = require('../../../src/controllers');
 
 const { expect } = chai;
@@ -79,5 +79,31 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
     await productsController.updateProduct(req, res);
     expect(res.status).to.have.been.calledWith(200);
     expect(res.json).to.have.been.calledWith(updatedProductFromModel);
+  });
+
+  it('Deletando product por id com sucesso - Status 204', async function () {
+    sinon.stub(productsService, 'deleteProduct').resolves(productFromServiceDeleted);
+    const req = { params: { id: 1 }, body: { } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      end: sinon.stub(),
+    };
+
+    await productsController.deleteProduct(req, res);
+    expect(res.status).to.have.been.calledWith(204);
+    expect(res.end).to.have.been.calledWith();
+  });
+
+  it('Não deleta product com id inexistente - Status 404', async function () {
+    sinon.stub(productsService, 'deleteProduct').resolves(productFromServiceNotFound);
+    const req = { params: { id: 1 }, body: { } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.deleteProduct(req, res);
+    expect(res.status).to.have.been.calledWith(404);
+    expect(res.json).to.have.been.calledWith({ message: 'Product not found' });
   });
 });

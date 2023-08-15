@@ -89,6 +89,34 @@ const productFromServiceUpdated = {
   data: updatedProductFromModel,
 };
 
+const deleteReturnFromDB = [
+  {
+    fieldCount: 0,
+    affectedRows: 1,
+    insertId: 0,
+    info: '',
+    serverStatus: 2,
+    warningStatus: 0,
+  },
+  undefined,
+];
+
+const productFromServiceDeleted = {
+  status: 'DELETED',
+};
+
+const notDeletedReturnFromDB = [
+  {
+    fieldCount: 0,
+    affectedRows: 0,
+    insertId: 0,
+    info: '',
+    serverStatus: 2,
+    warningStatus: 0,
+  },
+  undefined,
+];
+
 module.exports = {
   allProductsFromDB,
   productFromDB,
@@ -104,4 +132,7 @@ module.exports = {
   updateReturnFromDB,
   updatedProductFromModel,
   productFromServiceUpdated,
+  deleteReturnFromDB,
+  productFromServiceDeleted,
+  notDeletedReturnFromDB,
 };

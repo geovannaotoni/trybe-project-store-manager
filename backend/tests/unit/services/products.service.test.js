@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { productsModel } = require('../../../src/models');
-const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel, updatedProductFromModel, updateReturnFromDB } = require('../../mocks/products.mock');
+const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel, updatedProductFromModel, updateReturnFromDB, deleteReturnFromDB, notDeletedReturnFromDB } = require('../../mocks/products.mock');
 const { productsService } = require('../../../src/services');
 
 describe('Testes para a PRODUCTS SERVICE:', function () {
@@ -81,5 +81,26 @@ describe('Testes para a PRODUCTS SERVICE:', function () {
     const responseService = await productsService.updateProduct(inputData, productId);
     expect(responseService.status).to.equal('INVALID_VALUE');
     expect(responseService.data).to.deep.equal({ message: '"name" length must be at least 5 characters long' });
+  });
+
+  it('Deletando product com sucesso', async function () {
+    sinon.stub(productsModel, 'exclude')
+      .resolves(deleteReturnFromDB);
+
+    const productId = 4;
+    const responseService = await productsService.deleteProduct(productId);
+
+    expect(responseService.status).to.equal('DELETED');
+  });
+
+  it('Não deleta product se o id recebido não existir', async function () {
+    sinon.stub(productsModel, 'exclude')
+      .resolves(notDeletedReturnFromDB);
+
+    const productId = 4;
+    const responseService = await productsService.deleteProduct(productId);
+
+    expect(responseService.status).to.equal('NOT_FOUND');
+    expect(responseService.data).to.deep.equal({ message: 'Product not found' });
   });
 });
