@@ -4,7 +4,7 @@ const { productsModel } = require('../../../src/models');
 const { allProductsFromModel, productFromModel, productIdFromModel, newProductFromModel } = require('../../mocks/products.mock');
 const { productsService } = require('../../../src/services');
 
-describe('Testes para a PRODUCTS CONTROLLER:', function () {
+describe('Testes para a PRODUCTS SERVICE:', function () {
   afterEach(function () {
     sinon.restore();
   });

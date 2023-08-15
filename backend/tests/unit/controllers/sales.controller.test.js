@@ -2,7 +2,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const { salesService } = require('../../../src/services');
-const { allSalesFromServiceSuccessful, allSalesFromModel, saleFromModel, saleFromServiceSuccessful, saleFromServiceNotFound } = require('../../mocks/sales.mock');
+const { allSalesFromServiceSuccessful, allSalesFromModel, saleFromModel, saleFromServiceSuccessful, saleFromServiceNotFound, newSalesFromServiceCreated, newSalesFromModel } = require('../../mocks/sales.mock');
 const { salesController } = require('../../../src/controllers');
 
 const { expect } = chai;
@@ -13,7 +13,7 @@ describe('Testes para a SALES CONTROLLER:', function () {
     sinon.restore();
   });
 
-  it('Recuperando todos os products com sucesso - Status 200', async function () {
+  it('Recuperando todas as sales com sucesso - Status 200', async function () {
     sinon.stub(salesService, 'findAll').resolves(allSalesFromServiceSuccessful);
 
     const req = { params: { }, body: { } };
@@ -27,7 +27,7 @@ describe('Testes para a SALES CONTROLLER:', function () {
     expect(res.json).to.have.been.calledWith(allSalesFromModel);
   });
 
-  it('Recuperando product por id com sucesso', async function () {
+  it('Recuperando sale por id com sucesso - Status 200', async function () {
     sinon.stub(salesService, 'findById').resolves(saleFromServiceSuccessful);
 
     const req = { params: { id: 1 }, body: { } };
@@ -41,7 +41,7 @@ describe('Testes para a SALES CONTROLLER:', function () {
     expect(res.json).to.have.been.calledWith(saleFromModel);
   });
 
-  it('Não recupera product com id inexistente - status 404', async function () {
+  it('Não recupera sale com id inexistente - status 404', async function () {
     sinon.stub(salesService, 'findById').resolves(saleFromServiceNotFound);
 
     const req = { params: { id: 9999 }, body: { } };
@@ -53,5 +53,18 @@ describe('Testes para a SALES CONTROLLER:', function () {
     await salesController.findById(req, res);
     expect(res.status).to.have.been.calledWith(404);
     expect(res.json).to.have.been.calledWith(saleFromServiceNotFound.data);
+  });
+
+  it('Inserindo sales com sucesso - status 201', async function () {
+    sinon.stub(salesService, 'createSales').resolves(newSalesFromServiceCreated);
+    const req = { params: { }, body: newSalesFromModel };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.createSales(req, res);
+    expect(res.status).to.have.been.calledWith(201);
+    expect(res.json).to.have.been.calledWith(newSalesFromServiceCreated.data);
   });
 });

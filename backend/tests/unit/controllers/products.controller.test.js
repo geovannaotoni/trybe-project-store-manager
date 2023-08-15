@@ -27,7 +27,7 @@ describe('Testes para a PRODUCTS CONTROLLER:', function () {
     expect(res.json).to.have.been.calledWith(allProductsFromModel);
   });
 
-  it('Recuperando product por id com sucesso', async function () {
+  it('Recuperando product por id com sucesso - Status 200', async function () {
     sinon.stub(productsService, 'findById').resolves(productFromServiceSuccessful);
 
     const req = { params: { id: 1 }, body: { } };
