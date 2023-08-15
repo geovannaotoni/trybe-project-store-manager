@@ -44,8 +44,15 @@ const createSales = async (sales) => {
   });
 };
 
+const deleteSales = async (id) => {
+  const [{ affectedRows }] = await salesModel.exclude(id);
+  if (!affectedRows) return { status: 'NOT_FOUND', data: { message: 'Sale not found' } };
+  return { status: 'DELETED' };
+};
+
 module.exports = {
   findAll,
   findById,
   createSales,
+  deleteSales,
 };

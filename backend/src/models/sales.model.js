@@ -39,8 +39,14 @@ const insert = async (sales) => {
   return insertId;  
 };
 
+const exclude = async (id) => {
+  const query = 'DELETE FROM sales WHERE id = ?';
+  return connection.execute(query, [id]);
+};
+
 module.exports = {
   findAll,
   findById,
   insert,
+  exclude,
 };
