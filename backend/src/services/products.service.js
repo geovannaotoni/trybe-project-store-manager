@@ -49,10 +49,18 @@ const deleteProduct = async (id) => {
   return { status: 'DELETED' };
 };
 
+const searchProduct = async (q) => {
+  const products = await productsModel.findAll();
+  const filteredProducts = products
+    .filter(({ name }) => name.toLowerCase().includes(q.toLowerCase()));
+  return { status: 'SUCCESSFUL', data: filteredProducts };
+};
+
 module.exports = {
   findAll,
   findById,
   createProduct,
   updateProduct,
   deleteProduct,
+  searchProduct,
 };
