@@ -2,9 +2,8 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 const app = require('../../src/app');
-const { allProductsFromModel, allProductsFromDB, productFromModel, productFromDB, productIdFromDB, newProductFromModel, productFromServiceCreated } = require('../mocks/products.mock');
-const { productsModel } = require('../../src/models');
-const { productsService } = require('../../src/services');
+const { allProductsFromModel, allProductsFromDB, productFromModel, productFromDB, productIdFromDB, newProductFromModel } = require('../mocks/products.mock');
+const connection = require('../../src/models/connection');
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -15,7 +14,7 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método GET em /products - Retorna a lista completa de produtos!', async function () {
-    sinon.stub(productsModel, 'findAll').resolves(allProductsFromDB);
+    sinon.stub(connection, 'execute').resolves([allProductsFromDB]);
 
     const response = await chai
       .request(app)
@@ -26,7 +25,7 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método GET em /products/:id para buscar o ID 1', async function () {
-    sinon.stub(productsModel, 'findById').resolves(productFromDB);
+    sinon.stub(connection, 'execute').resolves([[productFromDB]]);
     const response = await chai
       .request(app)
       .get('/products/1');
@@ -36,8 +35,11 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método POST em /products para cadastrar um produto', async function () {
-    sinon.stub(productsModel, 'insert').resolves(productIdFromDB);
-    sinon.stub(productsService, 'createProduct').resolves(productFromServiceCreated);
+    sinon.stub(connection, 'execute')
+    .onFirstCall()
+    .resolves([productIdFromDB])
+    .onSecondCall()
+    .resolves([[newProductFromModel]]);
     const response = await chai
       .request(app)
       .post('/products/')

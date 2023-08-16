@@ -2,9 +2,9 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 const app = require('../../src/app');
-const { salesModel } = require('../../src/models');
 const { allSalesFromDB, allSalesFromModel, saleFromDB, saleFromModel, newSalesFromServiceCreated, newSalesFromModel, saleIdFromDB } = require('../mocks/sales.mock');
 const { salesService } = require('../../src/services');
+const connection = require('../../src/models/connection');
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -15,7 +15,7 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método GET em /sales - Retorna a lista completa de vendas!', async function () {
-    sinon.stub(salesModel, 'findAll').resolves(allSalesFromDB);
+    sinon.stub(connection, 'execute').resolves([allSalesFromDB]);
 
     const response = await chai
       .request(app)
@@ -26,7 +26,7 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método GET em /sales/:id para buscar o ID 1', async function () {
-    sinon.stub(salesModel, 'findById').resolves(saleFromDB);
+    sinon.stub(connection, 'execute').resolves([saleFromDB]);
     const response = await chai
       .request(app)
       .get('/sales/1');
@@ -36,7 +36,7 @@ describe('Testes para a rota /products', function () {
   });
 
   it('Usando o método POST em /products para cadastrar um produto', async function () {
-    sinon.stub(salesModel, 'insert').resolves(saleIdFromDB);
+    sinon.stub(connection, 'execute').resolves([saleIdFromDB]);
     sinon.stub(salesService, 'createSales').resolves(newSalesFromServiceCreated);
     const response = await chai
       .request(app)

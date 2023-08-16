@@ -50,9 +50,30 @@ const deleteSales = async (id) => {
   return { status: 'DELETED' };
 };
 
+const updateQuantity = async (saleId, productId, quantity) => {
+  const error = validation.validateNewQuantity(quantity);
+  if (error) return { status: error.status, data: { message: error.message } };
+
+  // aqui verifica somente se o produto existe, mas não se ele existe na venda de id = saleId
+  // const oldProduct = await productsModel.findById(productId);
+  // if (!oldProduct) return { status: 'NOT_FOUND', data: { message: 'Product not found in sale' } };
+
+  const oldSale = await salesModel.findById(saleId);
+  if (oldSale.length === 0) return { status: 'NOT_FOUND', data: { message: 'Sale not found' } };
+  
+  // aqui verifica se o produto existe naquela venda em específico
+  const oldProduct = oldSale.find((product) => product.productId === Number(productId));
+  if (!oldProduct) return { status: 'NOT_FOUND', data: { message: 'Product not found in sale' } };
+
+  await salesModel.updateQuantity(saleId, productId, quantity);
+  const result = await salesModel.findByProductAndSaleIds(saleId, productId);
+  return { status: 'SUCCESSFUL', data: result };
+};
+
 module.exports = {
   findAll,
   findById,
   createSales,
   deleteSales,
+  updateQuantity,
 };
