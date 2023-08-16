@@ -103,6 +103,34 @@ const newSalesFromServiceCreated = {
 const saleIdFromDB = { insertId: 10 };
 const saleIdFromModel = 10;
 
+const deleteReturnFromDB = [
+  {
+    fieldCount: 0,
+    affectedRows: 1,
+    insertId: 0,
+    info: '',
+    serverStatus: 2,
+    warningStatus: 0,
+  },
+  undefined,
+];
+
+const saleFromServiceDeleted = {
+  status: 'DELETED',
+};
+
+const notDeletedReturnFromDB = [
+  {
+    fieldCount: 0,
+    affectedRows: 0,
+    insertId: 0,
+    info: '',
+    serverStatus: 2,
+    warningStatus: 0,
+  },
+  undefined,
+];
+
 module.exports = {
   allSalesFromDB,
   saleFromDB,
@@ -115,4 +143,7 @@ module.exports = {
   newSalesFromServiceCreated,
   saleIdFromDB,
   saleIdFromModel,
+  deleteReturnFromDB,
+  saleFromServiceDeleted,
+  notDeletedReturnFromDB,
 };
