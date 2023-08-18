@@ -10,7 +10,7 @@ Aplicação que consiste em um sistema de gerenciamento de vendas de produtos, n
 
 2. **Sem Docker:**
   - Instale as dependências: `npm install`
-  - Inicie os containers: `docker-compose up -d`
+  - Inicie apenas o serviço *db*: `docker-compose up -d db`
   - Inicie a aplicação: `npm run dev:local`
 
 3. **Rodando os testes:**
